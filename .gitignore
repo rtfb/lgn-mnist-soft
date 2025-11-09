@@ -1,0 +1,4 @@
+*.npz
+/tt10-lgn-mnist
+/main.c
+/a.out
