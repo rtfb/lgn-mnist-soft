@@ -18,7 +18,5 @@ cd ..
 ### Run
 
 ```
-python do.py > main.c
-gcc main.c
-./a.out
+make run
 ```
