@@ -71,13 +71,15 @@ return inferred_class;
 }
 ''')
 
-print('int main() {')
-print('\t#include "inputs.c"')
+print('''int main() {
+    #include "inputs.c"
 
-print('\tchar *inp = raw_inputs[{}];'.format(test_image))
-print('\tint inferred_class = do_inference(inp);')
-print('\tprintf("Inferred class: %d\\n", inferred_class);')
-print('')
+    for (int i = 0; i < 600; i++) {
+        char *inp = raw_inputs[i];
+        int inferred_class = do_inference(inp);
+        printf("Input %d: inferred class: %d\\n", i, inferred_class);
+    }
+''')
 
 if DEBUG:
     print('\nchar known_outputs[{}] = {{'.format(layer_size))
