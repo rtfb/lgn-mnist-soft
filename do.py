@@ -35,26 +35,49 @@ def op(gate_type, A, B):
 layer_size = len(d["gate_types"][0])
 test_image = 1
 
-print('#include <stdio.h>')
-print('')
-print('int main() {')
-print('\t#include "inputs.c"')
-
-print('\tchar *inp = raw_inputs[{}];'.format(test_image))
-print('')
-
 def do_layer(data, layer_name, layer_idx, input_layer):
-    print('\tchar {}[{}];'.format(layer_name, layer_size))
+    print('\tchar {}[{}] = {{'.format(layer_name, layer_size))
     for i, g in enumerate(data['gate_types'][layer_idx]):
         conn_A = data['connections.A'][layer_idx][i]
         conn_B = data['connections.B'][layer_idx][i]
         A = f'{input_layer}[{conn_A}]'
         B = f'{input_layer}[{conn_B}]'
-        print(f'\t{layer_name}[{i}] = {op(g, A, B)};')
+        print(f'\t{op(g, A, B)},')
+    print('\t};')
     print()
 
+print('#include <stdio.h>')
+print('')
+
+print('int do_inference(char *inp) {')
 do_layer(d, 'l1', 0, 'inp')
 do_layer(d, 'l2', 1, 'l1')
+print('''int max_sum = 0;
+int inferred_class = 0;
+for (int class = 0; class < 10; class++) {
+    int sum = 0;
+    for (int i = 0; i < 255; i++) {
+        sum += l2[class*255+i];
+    }
+    // printf("%d\\n", sum);
+    if (sum > max_sum) {
+        max_sum = sum;
+        inferred_class = class;
+    }
+}
+
+// printf("inferred: %d (with sum %d)\\n", inferred_class, max_sum);
+return inferred_class;
+}
+''')
+
+print('int main() {')
+print('\t#include "inputs.c"')
+
+print('\tchar *inp = raw_inputs[{}];'.format(test_image))
+print('\tint inferred_class = do_inference(inp);')
+print('\tprintf("Inferred class: %d\\n", inferred_class);')
+print('')
 
 if DEBUG:
     print('\nchar known_outputs[{}] = {{'.format(layer_size))
@@ -62,24 +85,6 @@ if DEBUG:
     for i, g in enumerate(ti):
         print(f"{int(ti[i])},", end='\n' if (i+1)&0xf==0 else '')
     print('};')
-
-print('''
-int max_sum = 0;
-int inferred_class = 0;
-for (int class = 0; class < 10; class++) {
-    int sum = 0;
-    for (int i = 0; i < 255; i++) {
-        sum += l2[class*255+i];
-    }
-    printf("%d\\n", sum);
-    if (sum > max_sum) {
-        max_sum = sum;
-        inferred_class = class;
-    }
-}
-
-printf("inferred: %d (with sum %d)\\n", inferred_class, max_sum);
-''')
 
 if DEBUG:
     print('''
@@ -93,4 +98,4 @@ if DEBUG:
     }
     printf("\\n");
 ''')
-print('return 0;\n}')
+print('\treturn 0;\n}')
