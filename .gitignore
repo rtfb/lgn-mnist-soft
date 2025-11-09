@@ -1,4 +1,5 @@
 *.npz
 /tt10-lgn-mnist
 /main.c
+/inputs.c
 /a.out
