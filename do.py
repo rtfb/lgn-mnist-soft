@@ -31,13 +31,10 @@ def op(gate_type, A, B):
 
 print('#include <stdio.h>')
 print('int main() {')
+print('#include "inputs.c"')
 
 test_image = 1
-
-print('char inp[256] = {')
-for i, p in enumerate(d["input"][test_image]):
-    print(f"{int(p)},", end='\n' if (i+1)&0xf==0 else '')
-print('};\n')
+print('char *inp = raw_inputs[{}];\n'.format(test_image))
 
 print('char n[{}];'.format(len(d["gate_types"][0])))
 for i, g in enumerate(d["gate_types"][0]):
