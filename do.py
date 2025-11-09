@@ -64,13 +64,21 @@ if DEBUG:
     print('};')
 
 print('''
+int max_sum = 0;
+int inferred_class = 0;
 for (int class = 0; class < 10; class++) {
     int sum = 0;
     for (int i = 0; i < 255; i++) {
         sum += l2[class*255+i];
     }
     printf("%d\\n", sum);
+    if (sum > max_sum) {
+        max_sum = sum;
+        inferred_class = class;
+    }
 }
+
+printf("inferred: %d (with sum %d)\\n", inferred_class, max_sum);
 ''')
 
 if DEBUG:
