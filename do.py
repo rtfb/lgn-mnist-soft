@@ -1,13 +1,16 @@
 import numpy as np
 
+DEBUG = False
+DEBUG_NP = False
+
 d = np.load("tt10-lgn-mnist/src/20250915-070516_binTestAcc9760_seed230646_epochs100_2x4000_b256_lr30_interconnect.npz")
-# print(d["gate_types"].shape)
-# print(d["input"].shape)
-# print(d["output"].shape)
-# print(d["connections.A"].shape)
-# print(max(d["connections.A"][0]))
-# print(max(d["connections.B"][0]))
-# print(max(d["gate_types"][0]))
+
+if DEBUG_NP:
+    print(d.keys())
+    print(d["gate_types"].shape)
+    print(d["input"].shape)
+    print(d["output"].shape)
+    print(d["connections.A"].shape)
 
 def op(gate_type, A, B):
     return [
@@ -53,15 +56,13 @@ def do_layer(data, layer_name, layer_idx, input_layer):
 do_layer(d, 'l1', 0, 'inp')
 do_layer(d, 'l2', 1, 'l1')
 
-print('\nchar known_outputs[{}] = {{'.format(layer_size))
-ti = d['output'][test_image]
-for i, g in enumerate(ti):
-    print(f"{int(ti[i])},", end='\n' if (i+1)&0xf==0 else '')
-print('};')
+if DEBUG:
+    print('\nchar known_outputs[{}] = {{'.format(layer_size))
+    ti = d['output'][test_image]
+    for i, g in enumerate(ti):
+        print(f"{int(ti[i])},", end='\n' if (i+1)&0xf==0 else '')
+    print('};')
 
-# print('for (int i = 0; i<2550; i++) {')
-# print('    printf("%d\\n", l2[i]);')
-# print('}')
 print('''
 for (int class = 0; class < 10; class++) {
     int sum = 0;
@@ -70,16 +71,18 @@ for (int class = 0; class < 10; class++) {
     }
     printf("%d\\n", sum);
 }
+''')
 
-for (int i = 0; i < 2550; i++ ) {
-    if (l2[i] != known_outputs[i]) {
-        printf("Mismatch at %d: got %d, expected %d\\n", i, l2[i], known_outputs[i]);
+if DEBUG:
+    print('''
+    for (int i = 0; i < 2550; i++ ) {
+        if (l2[i] != known_outputs[i]) {
+            printf("Mismatch at %d: got %d, expected %d\\n", i, l2[i], known_outputs[i]);
+        }
     }
-}
-
-for (int i = 0; i < 2550; i++ ) {
-    printf("%d", l2[i]);
-}
-printf("\\n");
+    for (int i = 0; i < 2550; i++ ) {
+        printf("%d", l2[i]);
+    }
+    printf("\\n");
 ''')
 print('return 0;\n}')
