@@ -29,27 +29,31 @@ def op(gate_type, A, B):
         f"1"
     ][gate_type]
 
-print('#include <stdio.h>')
-print('int main() {')
-print('#include "inputs.c"')
-
+layer_size = len(d["gate_types"][0])
 test_image = 1
-print('char *inp = raw_inputs[{}];\n'.format(test_image))
 
-print('char n[{}];'.format(len(d["gate_types"][0])))
+print('#include <stdio.h>')
+print('')
+print('int main() {')
+print('\t#include "inputs.c"')
+
+print('\tchar *inp = raw_inputs[{}];'.format(test_image))
+print('')
+
+print('char l1[{}];'.format(layer_size))
 for i, g in enumerate(d["gate_types"][0]):
     A = f"inp[{d['connections.A'][0][i]}]"
     B = f"inp[{d['connections.B'][0][i]}]"
-    print(f"n[{i}] = {op(g, A, B)};")
+    print(f"l1[{i}] = {op(g, A, B)};")
 print()
 
-print('char l2[{}];'.format(len(d["gate_types"][0])))
+print('char l2[{}];'.format(layer_size))
 for i, g in enumerate(d["gate_types"][1]):
-    A = f"n[{d['connections.A'][1][i]}]"
-    B = f"n[{d['connections.B'][1][i]}]"
+    A = f"l1[{d['connections.A'][1][i]}]"
+    B = f"l1[{d['connections.B'][1][i]}]"
     print(f"l2[{i}] = {op(g, A, B)};")
 
-print('\nchar known_outputs[{}] = {{'.format(len(d["gate_types"][0])))
+print('\nchar known_outputs[{}] = {{'.format(layer_size))
 ti = d['output'][test_image]
 for i, g in enumerate(ti):
     print(f"{int(ti[i])},", end='\n' if (i+1)&0xf==0 else '')
