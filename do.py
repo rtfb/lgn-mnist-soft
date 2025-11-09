@@ -40,18 +40,18 @@ print('\t#include "inputs.c"')
 print('\tchar *inp = raw_inputs[{}];'.format(test_image))
 print('')
 
-print('char l1[{}];'.format(layer_size))
-for i, g in enumerate(d["gate_types"][0]):
-    A = f"inp[{d['connections.A'][0][i]}]"
-    B = f"inp[{d['connections.B'][0][i]}]"
-    print(f"l1[{i}] = {op(g, A, B)};")
-print()
+def do_layer(data, layer_name, layer_idx, input_layer):
+    print('\tchar {}[{}];'.format(layer_name, layer_size))
+    for i, g in enumerate(data['gate_types'][layer_idx]):
+        conn_A = data['connections.A'][layer_idx][i]
+        conn_B = data['connections.B'][layer_idx][i]
+        A = f'{input_layer}[{conn_A}]'
+        B = f'{input_layer}[{conn_B}]'
+        print(f'\t{layer_name}[{i}] = {op(g, A, B)};')
+    print()
 
-print('char l2[{}];'.format(layer_size))
-for i, g in enumerate(d["gate_types"][1]):
-    A = f"l1[{d['connections.A'][1][i]}]"
-    B = f"l1[{d['connections.B'][1][i]}]"
-    print(f"l2[{i}] = {op(g, A, B)};")
+do_layer(d, 'l1', 0, 'inp')
+do_layer(d, 'l2', 1, 'l1')
 
 print('\nchar known_outputs[{}] = {{'.format(layer_size))
 ti = d['output'][test_image]
