@@ -46,9 +46,6 @@ def do_layer(data, layer_name, layer_idx, input_layer):
     print('\t};')
     print()
 
-print('#include <stdio.h>')
-print('')
-
 print('int do_inference(char *inp) {')
 do_layer(d, 'l1', 0, 'inp')
 do_layer(d, 'l2', 1, 'l1')
@@ -71,16 +68,6 @@ return inferred_class;
 }
 ''')
 
-print('''int main() {
-    #include "inputs.c"
-
-    for (int i = 0; i < 600; i++) {
-        char *inp = raw_inputs[i];
-        int inferred_class = do_inference(inp);
-        printf("Input %d: inferred class: %d\\n", i, inferred_class);
-    }
-''')
-
 if DEBUG:
     print('\nchar known_outputs[{}] = {{'.format(layer_size))
     ti = d['output'][test_image]
@@ -100,4 +87,3 @@ if DEBUG:
     }
     printf("\\n");
 ''')
-print('\treturn 0;\n}')
