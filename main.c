@@ -5,7 +5,7 @@ extern int do_inference(char *inp);
 int main() {
     #include "inputs.c"
 
-    for (int i = 0; i < 600; i++) {
+    for (int i = 0; i < NUM_INPUTS; i++) {
         char *inp = raw_inputs[i];
         int inferred_class = do_inference(inp);
         printf("Input %d: inferred class: %d\n", i, inferred_class);

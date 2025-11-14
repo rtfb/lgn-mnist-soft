@@ -2,7 +2,9 @@ import numpy as np
 
 d = np.load("tt10-lgn-mnist/src/20250915-070516_binTestAcc9760_seed230646_epochs100_2x4000_b256_lr30_interconnect.npz")
 
-print('char raw_inputs[{}][256] = {{'.format(len(d["input"])))
+print('#define NUM_INPUTS {}\n'.format(len(d["input"])))
+
+print('char raw_inputs[NUM_INPUTS][256] = {')
 for image in d["input"]:
     print('\t{\n\t', end='')
     for i, p in enumerate(image):
