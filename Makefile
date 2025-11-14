@@ -2,10 +2,10 @@
 inputs.c: mk-inputs.py
 	python3 mk-inputs.py > $@
 
-main.c: do.py inputs.c Makefile
+main.c: do.py Makefile
 	python3 do.py > $@
 
-a.out: main.c
+a.out: main.c inputs.c
 	gcc -o $@ main.c
 
 run: a.out
