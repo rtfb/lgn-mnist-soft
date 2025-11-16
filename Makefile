@@ -6,7 +6,7 @@ inference.c: do.py
 	python3 do.py > $@
 
 a.out: main.c inputs.c inference.c Makefile
-	gcc -o $@ main.c inference.c
+	gcc -o $@ main.c inference.c decoder.c
 
 run: a.out
 	./a.out

@@ -35,7 +35,7 @@ def op(gate_type, A, B):
 layer_size = len(d["gate_types"][0])
 test_image = 1
 
-def do_layer(data, layer_name, layer_idx, input_layer):
+def do_layer1(data, layer_name, layer_idx, input_layer):
     print('\tchar {}[{}] = {{'.format(layer_name, layer_size))
     for i, g in enumerate(data['gate_types'][layer_idx]):
         conn_A = data['connections.A'][layer_idx][i]
@@ -46,27 +46,21 @@ def do_layer(data, layer_name, layer_idx, input_layer):
     print('\t};')
     print()
 
-print('int do_inference(char *inp) {')
-do_layer(d, 'l1', 0, 'inp')
-do_layer(d, 'l2', 1, 'l1')
-print('''int max_sum = 0;
-int inferred_class = 0;
-for (int class = 0; class < 10; class++) {
-    int sum = 0;
-    for (int i = 0; i < 255; i++) {
-        sum += l2[class*255+i];
-    }
-    // printf("%d\\n", sum);
-    if (sum > max_sum) {
-        max_sum = sum;
-        inferred_class = class;
-    }
-}
+def do_layer2(data, layer_name, layer_idx, input_layer):
+    for i, g in enumerate(data['gate_types'][layer_idx]):
+        conn_A = data['connections.A'][layer_idx][i]
+        conn_B = data['connections.B'][layer_idx][i]
+        A = f'{input_layer}[{conn_A}]'
+        B = f'{input_layer}[{conn_B}]'
+        print(f'\t{layer_name}[{i}] = {op(g, A, B)};')
+        if i >= 2549:
+            break
+    print()
 
-// printf("inferred: %d (with sum %d)\\n", inferred_class, max_sum);
-return inferred_class;
-}
-''')
+print('int do_inference(char *inp, char *out, int out_sz) {')
+do_layer1(d, 'l1', 0, 'inp')
+do_layer2(d, 'out', 1, 'l1')
+print('}')
 
 if DEBUG:
     print('\nchar known_outputs[{}] = {{'.format(layer_size))
