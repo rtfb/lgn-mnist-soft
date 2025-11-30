@@ -16,6 +16,26 @@ def op(gate_type, A, B):
     return [
         f"0",
         f"{A} & {B}",
+        f"{A} & ~{B}",
+        f"{A}",
+        f"{B} & ~{A}",
+        f"{B}",
+        f"{A} ^ {B}",
+        f"{A} | {B}",
+        f"~({A} | {B})",
+        f"~({A} ^ {B})",
+        f"~{B}",
+        f"~{B} | ({A} & {B})",
+        f"~{A}",
+        f"~{A} | ({A} & {B})",
+        f"~({A} & {B})",
+        f"1"
+    ][gate_type]
+
+def op1b(gate_type, A, B):
+    return [
+        f"0",
+        f"{A} & {B}",
         f"{A} & !{B}",
         f"{A}",
         f"{B} & !{A}",
@@ -58,6 +78,13 @@ def do_layer2(data, layer_name, layer_idx, input_layer):
     print()
 
 print('int do_inference(unsigned char *inp, unsigned char *out, int out_sz) {')
+do_layer1(d, 'l1', 0, 'inp')
+do_layer2(d, 'out', 1, 'l1')
+print('}')
+print()
+
+op = op1b
+print('int do_inference1b(unsigned char *inp, unsigned char *out, int out_sz) {')
 do_layer1(d, 'l1', 0, 'inp')
 do_layer2(d, 'out', 1, 'l1')
 print('}')
