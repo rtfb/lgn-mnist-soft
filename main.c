@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <stdio.h>
 
 #include "consts.h"
@@ -8,7 +9,7 @@ extern void decode_output_8b(char *output_layer, char *classes_out);
 
 int main(int argc, char **argv) {
     #include "inputs.c"
-    char output_layer[OUTL_SIZE];
+    uint8_t output_layer[OUTL_SIZE] = {0};
 
     if (argc == 1 || (argc == 2 && argv[1][0] == '1')) {
         printf("1-bit.\n");
@@ -23,9 +24,9 @@ int main(int argc, char **argv) {
 
     if (argc == 2 && argv[1][0] == '8') {
         printf("8-bit.\n");
-        char inferred_classes[8] = {0};
+        uint8_t inferred_classes[8] = {0};
         for (int i = 0; i < NUM_8B_INPUTS; i++) {
-            char *inp = packed_inputs[i];
+            uint8_t *inp = packed_inputs[i];
             do_inference(inp, output_layer, OUTL_SIZE);
             decode_output_8b(output_layer, inferred_classes);
             for (int j = 0; j < 8; j++) {

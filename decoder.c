@@ -47,7 +47,7 @@ void decoder_test(uint8_t input, uint8_t *counters, size_t ncounters) {
     *counter32 += lut[upper_nibble];
 }
 
-void decode_output_8b(char *output_layer, char *classes_out) {
+void decode_output_8b(uint8_t *output_layer, uint8_t *classes_out) {
     int max_sum[8] = {0};
     for (int class = 0; class < NUM_CLASSES; class++) {
         uint8_t counters[8] = {0};

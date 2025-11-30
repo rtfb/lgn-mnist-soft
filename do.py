@@ -36,7 +36,7 @@ layer_size = len(d["gate_types"][0])
 test_image = 1
 
 def do_layer1(data, layer_name, layer_idx, input_layer):
-    print('\tchar {}[{}] = {{'.format(layer_name, layer_size))
+    print('\tunsigned char {}[{}] = {{'.format(layer_name, layer_size))
     for i, g in enumerate(data['gate_types'][layer_idx]):
         conn_A = data['connections.A'][layer_idx][i]
         conn_B = data['connections.B'][layer_idx][i]
@@ -57,7 +57,7 @@ def do_layer2(data, layer_name, layer_idx, input_layer):
             break
     print()
 
-print('int do_inference(char *inp, char *out, int out_sz) {')
+print('int do_inference(unsigned char *inp, unsigned char *out, int out_sz) {')
 do_layer1(d, 'l1', 0, 'inp')
 do_layer2(d, 'out', 1, 'l1')
 print('}')
