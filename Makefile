@@ -5,7 +5,7 @@ inputs.c: mk-inputs.py
 inference.c: do.py
 	python3 do.py > $@
 
-a.out: main.c inputs.c inference.c Makefile
+a.out: main.c inputs.c inference.c Makefile decoder.c
 	gcc -o $@ main.c inference.c decoder.c
 
 run: a.out
