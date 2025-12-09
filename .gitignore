@@ -1,5 +1,6 @@
 *.npz
 /tt10-lgn-mnist
+/consts.h
 /inputs.c
 /inference.c
 /a.out
