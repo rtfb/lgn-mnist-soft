@@ -8,8 +8,8 @@ inputs.c: mk-inputs.py consts.h
 inference.c: do.py
 	python3 do.py > $@
 
-a.out: main.c inputs.c inference.c Makefile decoder.c consts.h
-	gcc -o $@ main.c inference.c decoder.c
+a.out: main.c inputs.c inference.c Makefile decoder.c pack.c consts.h
+	gcc -o $@ main.c inference.c decoder.c pack.c
 
 run: a.out
 	./a.out

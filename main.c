@@ -7,6 +7,7 @@ extern int do_inference(char *inp, char *out, int out_sz);
 extern int do_inference1b(char *inp, char *out, int out_sz);
 extern int decode_output(char *output_layer);
 extern void decode_output_8b(char *output_layer, char *classes_out);
+extern void pack(uint8_t inp[NUM_INPUTS][256], int out_width, uint8_t out[NUM_8B_INPUTS][256]);
 
 int main(int argc, char **argv) {
     #include "inputs.c"
@@ -25,9 +26,11 @@ int main(int argc, char **argv) {
 
     if (argc == 2 && argv[1][0] == '8') {
         printf("8-bit.\n");
+        uint8_t packed[NUM_8B_INPUTS][256] = {0};
+        pack(raw_inputs, 8, packed);
         uint8_t inferred_classes[8] = {0};
         for (int i = 0; i < NUM_8B_INPUTS; i++) {
-            uint8_t *inp = packed_inputs[i];
+            uint8_t *inp = packed[i];
             do_inference(inp, output_layer, OUTL_SIZE);
             decode_output_8b(output_layer, inferred_classes);
             for (int j = 0; j < 8; j++) {
