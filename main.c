@@ -22,7 +22,7 @@ extern uint8_t raw_inputs[NUM_INPUTS][256];
 
 int main(int argc, char **argv) {
 
-    if (argc == 1 || (argc == 2 && argv[1][0] == '1')) {
+    if (argc == 1 || (argc == 2 && argv[1][0] == '1' && argv[1][1] == '\0')) {
         uint8_t output_layer[OUTL_SIZE] = {0};
         printf("1-bit.\n");
         for (int i = 0; i < NUM_INPUTS; i++) {
