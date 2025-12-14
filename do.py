@@ -87,6 +87,8 @@ def make_inference_func(suffix, elem_type):
 print('#include <stdint.h>\n')
 make_inference_func('8b', 'uint8_t')
 make_inference_func('16b', 'uint16_t')
+make_inference_func('32b', 'uint32_t')
+make_inference_func('64b', 'uint64_t')
 
 op = op1b
 print('int do_inference1b(unsigned char *inp, unsigned char *out, int out_sz) {')

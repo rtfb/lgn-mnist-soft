@@ -21,3 +21,5 @@ void pack##suffix(uint8_t inp[NUM_INPUTS][256], int out_width,              \
 
 PACK(8, uint8_t, NUM_8B_INPUTS)
 PACK(16, uint16_t, NUM_16B_INPUTS)
+PACK(32, uint32_t, NUM_32B_INPUTS)
+PACK(64, uint64_t, NUM_64B_INPUTS)
