@@ -9,8 +9,9 @@ extern int decode_output(char *output_layer);
 extern void decode_output_8b(char *output_layer, char *classes_out);
 extern void pack(uint8_t inp[NUM_INPUTS][256], int out_width, uint8_t out[NUM_8B_INPUTS][256]);
 
+extern uint8_t raw_inputs[NUM_INPUTS][256];
+
 int main(int argc, char **argv) {
-    #include "inputs.c"
     uint8_t output_layer[OUTL_SIZE] = {0};
 
     if (argc == 1 || (argc == 2 && argv[1][0] == '1')) {

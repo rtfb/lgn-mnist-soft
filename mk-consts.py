@@ -1,13 +1,14 @@
-import numpy as np
+import sys
 
-d = np.load("tt10-lgn-mnist/src/20250915-070516_binTestAcc9760_seed230646_epochs100_2x4000_b256_lr30_interconnect.npz")
-inputs = d['input']   # shape = (NUM_8B_INPUTS*8, 256)
+NUM_INPUTS = 100_032  # multiple of 64
 
-NUM_64B_INPUTS = inputs.shape[0] // 64
-NUM_32B_INPUTS = NUM_64B_INPUTS * 2
-NUM_16B_INPUTS = NUM_32B_INPUTS * 2
-NUM_8B_INPUTS = NUM_16B_INPUTS * 2
-NUM_INPUTS = NUM_8B_INPUTS * 8
+if len(sys.argv) > 1 and sys.argv[1] == 'small':
+    NUM_INPUTS = 1024
+
+NUM_8B_INPUTS = NUM_INPUTS // 8
+NUM_16B_INPUTS = NUM_8B_INPUTS // 2
+NUM_32B_INPUTS = NUM_16B_INPUTS // 2
+NUM_64B_INPUTS = NUM_32B_INPUTS // 2
 
 print('#ifndef _CONSTS_H_')
 print('#define _CONSTS_H_\n')
