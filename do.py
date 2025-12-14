@@ -55,8 +55,8 @@ def op1b(gate_type, A, B):
 layer_size = len(d["gate_types"][0])
 test_image = 1
 
-def do_layer1(data, layer_name, layer_idx, input_layer):
-    print('\tunsigned char {}[{}] = {{'.format(layer_name, layer_size))
+def do_layer1(elem_type, data, layer_name, layer_idx, input_layer):
+    print('\t{} {}[{}] = {{'.format(elem_type, layer_name, layer_size))
     for i, g in enumerate(data['gate_types'][layer_idx]):
         conn_A = data['connections.A'][layer_idx][i]
         conn_B = data['connections.B'][layer_idx][i]
@@ -77,15 +77,20 @@ def do_layer2(data, layer_name, layer_idx, input_layer):
             break
     print()
 
-print('int do_inference(unsigned char *inp, unsigned char *out, int out_sz) {')
-do_layer1(d, 'l1', 0, 'inp')
-do_layer2(d, 'out', 1, 'l1')
-print('}')
-print()
+def make_inference_func(suffix, elem_type):
+    print(f'int do_inference_{suffix}({elem_type} *inp, {elem_type} *out, int out_sz) {{')
+    do_layer1(elem_type, d, 'l1', 0, 'inp')
+    do_layer2(d, 'out', 1, 'l1')
+    print('}')
+    print()
+
+print('#include <stdint.h>\n')
+make_inference_func('8b', 'uint8_t')
+make_inference_func('16b', 'uint16_t')
 
 op = op1b
 print('int do_inference1b(unsigned char *inp, unsigned char *out, int out_sz) {')
-do_layer1(d, 'l1', 0, 'inp')
+do_layer1('uint8_t', d, 'l1', 0, 'inp')
 do_layer2(d, 'out', 1, 'l1')
 print('}')
 

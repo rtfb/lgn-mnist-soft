@@ -3,18 +3,21 @@
 
 #include "consts.h"
 
-extern int do_inference(char *inp, char *out, int out_sz);
+extern int do_inference_8b(uint8_t *inp, uint8_t *out, int out_sz);
+extern int do_inference_16b(uint16_t *inp, uint16_t *out, int out_sz);
 extern int do_inference1b(char *inp, char *out, int out_sz);
 extern int decode_output(char *output_layer);
-extern void decode_output_8b(char *output_layer, char *classes_out);
-extern void pack(uint8_t inp[NUM_INPUTS][256], int out_width, uint8_t out[NUM_8B_INPUTS][256]);
+extern void decode_output_8b(uint8_t *output_layer, uint8_t *classes_out);
+extern void decode_output_16b(uint16_t *output_layer, uint8_t *classes_out);
+extern void pack8(uint8_t inp[NUM_INPUTS][256], int out_width, uint8_t out[NUM_8B_INPUTS][256]);
+extern void pack16(uint8_t inp[NUM_INPUTS][256], int out_width, uint16_t out[NUM_16B_INPUTS][256]);
 
 extern uint8_t raw_inputs[NUM_INPUTS][256];
 
 int main(int argc, char **argv) {
-    uint8_t output_layer[OUTL_SIZE] = {0};
 
     if (argc == 1 || (argc == 2 && argv[1][0] == '1')) {
+        uint8_t output_layer[OUTL_SIZE] = {0};
         printf("1-bit.\n");
         for (int i = 0; i < NUM_INPUTS; i++) {
             char *inp = raw_inputs[i];
@@ -26,16 +29,34 @@ int main(int argc, char **argv) {
     }
 
     if (argc == 2 && argv[1][0] == '8') {
+        uint8_t output_layer[OUTL_SIZE] = {0};
         printf("8-bit.\n");
         uint8_t packed[NUM_8B_INPUTS][256] = {0};
-        pack(raw_inputs, 8, packed);
+        pack8(raw_inputs, 8, packed);
         uint8_t inferred_classes[8] = {0};
         for (int i = 0; i < NUM_8B_INPUTS; i++) {
             uint8_t *inp = packed[i];
-            do_inference(inp, output_layer, OUTL_SIZE);
+            do_inference_8b(inp, output_layer, OUTL_SIZE);
             decode_output_8b(output_layer, inferred_classes);
             for (int j = 0; j < 8; j++) {
                 printf("Input %d: inferred class: %d\n", i*8+j, inferred_classes[j]);
+            }
+        }
+        return 0;
+    }
+
+    if (argc == 2 && argv[1][0] == '1' && argv[1][1] == '6') {
+        uint16_t output_layer[OUTL_SIZE] = {0};
+        printf("16-bit.\n");
+        uint16_t packed[NUM_16B_INPUTS][256] = {0};
+        pack16(raw_inputs, 16, packed);
+        uint8_t inferred_classes[16] = {0};
+        for (int i = 0; i < NUM_16B_INPUTS; i++) {
+            uint16_t *inp = packed[i];
+            do_inference_16b(inp, output_layer, OUTL_SIZE);
+            decode_output_16b(output_layer, inferred_classes);
+            for (int j = 0; j < 16; j++) {
+                printf("Input %d: inferred class: %d\n", i*16+j, inferred_classes[j]);
             }
         }
         return 0;
